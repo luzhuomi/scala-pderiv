@@ -111,6 +111,19 @@ object Translate
 			} yield (PE(r))
 		}
 	}
+	// making a RE out of a sequence of REs by concatenation
+	def mkSeq(l:List[RE]):RE = l match 
+	{
+		case Nil => Empty
+		case (r::rs) => rs.foldLeft(r)( (x:RE,y:RE) => Seq(x,y) )
+	}	
+
+	// making a RE out of a list of character via choice 
+	def char_list_to_re(l:List[Char]):RE = l match
+	{
+		case Nil => Empty
+		case (c::cs) => cs.foldLeft(L(c):RE)( (r:RE,c:Char) => RE.Choice(r,L(c),Greedy) )
+	}
 
 	// a tricky wrapper to have point with a slightly more specific instance of Monad State
 	def point[A](a: => A)(implicit m:Monad[({type λ[B] = State[TState,B]})#λ]):State[TState,A] = m.point(a)
@@ -135,6 +148,7 @@ object Translate
 			def mkChoice(ps:List[Pat]) : Pat = ps match 
 			{
 				case (p::ps_) => ps_.foldLeft(p)( (p1:Pat,p2:Pat) => PChoice(p1,p2,Greedy))
+				case Nil => PE (Phi)
 			}
 			for 
 			{
@@ -146,5 +160,127 @@ object Translate
 	def r_trans(epat:EPat):State[TState,RE] = epat match 
 	{
 		case EEmpty => point(Empty)
+		case EGroup(e) => r_trans(e) // this is not possible
+		case EGroupNonMarking(e) => r_trans(e) 
+		case EOr(es) => 
+		{
+			def mkChoice(rs:List[RE]) : RE = rs match 
+			{
+				case (r::rs_) => rs_.foldLeft(r)( (r1:RE,r2:RE) => RE.Choice(r1,r2,Greedy))
+				case Nil => Phi
+			}
+			for 
+			{
+				rs <- es.traverseS(r_trans(_))
+			} yield mkChoice(rs)
+		}
+		case EConcat(es) => 
+		{
+			def mkConcat(rs:List[RE]) : RE = rs match 
+			{
+				case (r::rs_) => rs_.foldLeft(r)( (r1:RE,r2:RE) => Seq(r1,r2))
+				case Nil => Empty
+			}
+			for 
+			{
+				rs <- es.traverseS(r_trans(_))
+			} yield mkConcat(rs)
+		}
+
+		case EOpt(e,b) => 
+		{
+			val g = if (b) { Greedy	} else { NotGreedy }
+			for 
+			{ 
+				r <- r_trans(e) 
+			} yield RE.Choice(r,Empty,g)
+		}
+		case EPlus(e,b) => 
+		{
+			val g = if (b) { Greedy	} else { NotGreedy }
+			for 
+			{ 
+				r <- r_trans(e) 
+			} yield Seq(r,Star(r,g))
+		}
+		case EStar(e,b) => 
+		{
+			val g = if (b) { Greedy	} else { NotGreedy }
+			for 
+			{ 
+				r <- r_trans(e) 
+			} yield Star(r,g)
+		}
+		case EBound(e,low,Some(high),b) =>
+		{
+			val g = if (b) { Greedy	} else { NotGreedy }		
+			def go(r:RE):RE = 
+			{
+				val r1s = Nil.padTo(low,r)
+				val r1  = mkSeq(r1s)
+				val r2s = Nil.padTo(high - low, RE.Choice(r,Empty,g))
+				val r2  = mkSeq(r2s)
+				(r1,r2) match 
+				{
+					case (Empty,Empty) => Empty
+					case (Empty,_)     => r2
+					case (_    ,Empty) => r1
+					case (_    ,_)     => Seq(r1,r2)
+				}
+			}
+			for 
+			{
+				r <- r_trans(e)
+			} yield go(r)			
+		}
+		case EBound(e,low,None,b) => 
+		{
+			val g = if (b) { Greedy	} else { NotGreedy }
+			def go(r:RE):RE =
+			{
+				val r1s = Nil.padTo(low,r)
+				val r1  = mkSeq(r1s)
+				Seq(r1,Star(r,g))
+			}
+			for 
+			{
+				r <- r_trans(e)
+			} yield go(r)	
+		}
+		case ECarat => for 
+		{	// currently we anchor the entire expression regardless of where ^ appears, we turn the subsequent ECarat into literal
+			f <- getAnchorStart
+			x <- if (f) 
+			{
+				point(L('^'))
+			} else 
+			{ 
+				for 
+				{
+					_ <- setAnchorStart
+				} yield Empty
+			}
+		} yield x
+		case EDollar => for 
+		{	// similar to ecarat, excep that we will not turn treat the subsequent EDollars as literal
+			f <- getAnchorEnd
+			x <- if (f)
+			{
+				point(())
+			} else 
+			{
+				setAnchorEnd
+			}
+		} yield Empty
+
+		case EDot => point(Any)
+
+		case EAny(cs) => point(char_list_to_re(cs))
+
+		case ENoneOf(cs) => point(Not(cs))
+
+		case EEscape(c) => point(L(c))
+
+		case EChar(c) => point(L(c))
 	}
 }
