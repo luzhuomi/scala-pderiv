@@ -4,6 +4,8 @@ object Common
 {
 	type Range = (Int,Int)
 
+	type Letter = (Char,Int)
+
 	sealed trait GFlag 
 	case object Greedy extends GFlag
 	case object NotGreedy extends GFlag
@@ -13,4 +15,30 @@ object Common
 	val subBinder = 2147483647
 	val mainBinder = 0
 
+	trait PosEpsilon[T] 
+	{
+		def posEpsilon(a:T):Boolean
+	}
+
+	trait IsEpsilon[T]
+	{
+		def isEpsilon(a:T):Boolean
+	}
+
+	trait IsPhi[T]
+	{
+		def isPhi(a:T):Boolean
+	}
+
+	trait Simplifiable[T] 
+	{
+		def simplify(t:T):T
+	}
+
+	trait IsGreedy[T]
+	{
+		def isGreedy(t:T):Boolean
+	}
+
+	def my_hash(i:Int, x:Char):Int = x.toInt + 256 * i
 }

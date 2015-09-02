@@ -92,7 +92,10 @@ object Translate
 			val hasAnchorE = state.anchorEnd
 			(hasAnchorS,hasAnchorE) match 
 			{
-				case ((true,true)) => PVar(mainBinder,Nil,pat)
+				case (true,true) => PVar(mainBinder,Nil,pat)
+				case (true,false) => PPair(PVar(mainBinder,Nil,pat), PVar(subBinder,Nil,PE(Star(Any,NotGreedy))))
+				case (false,true) => PPair(PVar(preBinder,Nil,PE(Star(Any,NotGreedy))), PVar(mainBinder,Nil,pat)) 
+				case (false,false) => PPair(PVar(preBinder,Nil,PE(Star(Any,NotGreedy))), PPair(PVar(mainBinder,Nil,pat),PVar(subBinder,Nil,PE(Star(Any,NotGreedy))))) 
 			}
 		}
 	}
@@ -155,6 +158,109 @@ object Translate
 				ps <- es.traverseS(trans(_))
 			} yield mkChoice(ps)
 		}
+		case EConcat(es) => for
+		{
+			ps <- es.traverseS(trans(_))
+			val q = ps.reverse match 
+			{
+				case (pp::pps) => pps.foldLeft(pp) ( (p1:Pat, p2:Pat) => PPair (p2,p1) )
+				case Nil => PE (Phi)
+			}
+		} yield q
+		case EOpt(e,b) => for 
+		{
+			p <- trans(e)
+			val g = if (b) { Greedy } else { NotGreedy }
+		} yield PChoice(p,PE(Empty),g)
+		case EPlus(e,b) => for 
+		{
+			p <- trans(e)
+			val g = if (b) { Greedy } else { NotGreedy }
+		} yield PPair(p,PStar(p,g))
+		case EStar(e,b) => for 
+		{
+			p <- trans(e)
+			val g = if (b) { Greedy } else { NotGreedy }
+		} yield PStar(p,g)
+		case EBound(e,low,Some(high),b) => for 
+		{
+			r <- r_trans(e)
+			i <- getIncNGI
+			val g = if (b) { Greedy } else { NotGreedy }
+			val r1s = Nil.padTo(low,r)
+			val r1  = mkSeq(r1s)
+			val r2s = Nil.padTo(high-low,RE.Choice(r,Empty,g))
+			val r2  = mkSeq(r2s)
+			val r3 = (r1,r2) match 
+			{
+				case (Empty,Empty) => Empty
+				case (Empty,_)     => r2
+				case (_    ,Empty) => r1
+				case (_    ,_)     => Seq(r1,r2)
+			}
+			val p = PVar(i,Nil,PE(r3))
+		} yield p
+		case EBound(e,low,None,b) => for 
+		{
+			r <- r_trans(e)
+			i <- getIncNGI
+			val g = if (b) { Greedy } else { NotGreedy }
+			val r1s = Nil.padTo(low,r)
+			val r1  = mkSeq(r1s)
+			val r2  = Seq(r1,Star(r,g))
+			val p   = PVar(i, Nil, PE(r2))
+		}  yield p
+		case ECarat => for 
+		{
+			f <- getAnchorStart
+			x <- if (f) 
+			{
+				for 
+				{
+					i <- getIncNGI
+				} yield PVar(i,Nil,PE(L('^')))
+			} else 
+			{
+				for 
+				{
+					_ <- setAnchorStart
+					i <- getIncNGI
+				} yield PVar(i,Nil,PE(Empty))
+			}
+		} yield x
+		case EDollar => for 
+		{
+			f <- getAnchorEnd
+			_ <- if (f) 
+			{
+				point(())
+			} else 
+			{
+				setAnchorEnd
+			}
+			i <- getIncNGI
+			val p = PVar(i,Nil,PE(Empty))
+		} yield p
+		case EDot => for 
+		{
+			i <- getIncNGI
+		} yield PVar(i,Nil,PE(Any))
+		case EAny(cs) => for 
+		{
+			i <- getIncNGI
+		} yield PVar(i,Nil,PE(char_list_to_re(cs)))
+		case ENoneOf(cs) => for 
+		{
+			i <- getIncNGI
+		} yield PVar(i,Nil,PE(Not(cs)))
+		case EEscape(c) => for 
+		{
+			i <- getIncNGI
+		} yield PVar(i,Nil,PE(L(c)))
+		case EChar(c) => for
+		{
+			i <- getIncNGI
+		} yield PVar(i,Nil,PE(L(c)))
 	}
 
 	def r_trans(epat:EPat):State[TState,RE] = epat match 
@@ -284,3 +390,11 @@ object Translate
 		case EChar(c) => point(L(c))
 	}
 }
+
+/**
+scala> import com.github.luzhuomi.scalazparsec.NonBacktracking._
+scala> import com.github.luzhuomi.regex.Parser._
+scala> import com.github.luzhuomi.regex.Translate._ 
+scala> parseEPat("^[ab]*$") match { case Consumed(Some((x,_))) => translate(x) }
+res12: com.github.luzhuomi.regex.IntPattern.Pat = PVar(0,List(),PE(Seq(Seq(Empty,Star(Choice(L(a),L(b),Greedy),Greedy)),Empty)))
+*/
