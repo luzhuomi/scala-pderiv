@@ -49,6 +49,26 @@ object IntPattern
 
 	type Binder = IntMap[List[(Int,Int)]]
 
+	def toBinder(p:Pat):Binder = 
+	{ 
+		val em:Binder = IntMap.empty
+		toBinderList(p).foldLeft(em)( (im,kv) => im + kv )
+	}
+	
+	def toBinderList(p:Pat):List[(Int,List[(Int,Int)])] = p match 
+	{
+		case PVar(i,rs,p)     => (i,rs)::toBinderList(p)
+		case PE(r)            => Nil
+		case PPair(p1,p2)     => toBinderList(p1) ++ toBinderList(p2)
+		case PPlus(p1,p2)     => toBinderList(p1) ++ toBinderList(p2)
+		case PStar(p,g)       => toBinderList(p)
+		case PChoice(p1,p2,g) => toBinderList(p1) ++ toBinderList(p2)
+		case PEmpty(p)        => toBinderList(p)
+	} 
+
+	def listify(b:Binder):List[(Int,List[Range])] = b.toList.sortWith( (x,y) => (x._1 < y._1) )
+
+
 	def pdPat0Sim(p:Pat, l:Letter)(implicit s:Simplifiable[Pat]):List[(Pat,Int => Binder => Binder)] =
 	{
 		val pfs = pdPat0(p,l)
