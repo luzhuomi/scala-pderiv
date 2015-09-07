@@ -54,7 +54,7 @@ object IntPattern
 		val em:Binder = IntMap.empty
 		toBinderList(p).foldLeft(em)( (im,kv) => im + kv )
 	}
-	
+
 	def toBinderList(p:Pat):List[(Int,List[(Int,Int)])] = p match 
 	{
 		case PVar(i,rs,p)     => (i,rs)::toBinderList(p)
@@ -97,7 +97,7 @@ object IntPattern
 			for 
 			{
 				(pd,f) <- pfs 
-			} yield (PVar(x,Nil,pd), ((i:Int) => g(i)))
+			} yield (PVar(x,Nil,pd), ((i:Int) => (b:Binder) => g(i)(f(i)(b))))
 		}
 		case PVar(x,w,p)  =>
 		{

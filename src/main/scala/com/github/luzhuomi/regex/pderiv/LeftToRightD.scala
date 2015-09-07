@@ -245,7 +245,7 @@ object LeftToRightD
 						val binders:List[Binder] = currNfaStateBinders.foldLeft(em)(go)
 						val nextNfaStateBinders  = next_nfaStates.zip(binders).map( xy => (j,xy._1,xy._2))
 						val cnt_ 				 = cnt + 1
-						patMatchesIntStatePdPat(cnt,dStateTable,w,nextNfaStateBinders)
+						patMatchesIntStatePdPat(cnt_,dStateTable,w,nextNfaStateBinders)
 					}
 				}
 			}

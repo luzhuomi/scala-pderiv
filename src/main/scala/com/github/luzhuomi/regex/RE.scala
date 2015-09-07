@@ -186,7 +186,7 @@ object RE
 		case Star(r,g) =>
 		{
 			val s0 = pdSub(r,l)
-			val s1 = s0 map ( r => Seq(r,Star(r,g)))
+			val s1 = s0 map ( r1 => Seq(r1,Star(r,g)))
 			s1
 		}
 	}
