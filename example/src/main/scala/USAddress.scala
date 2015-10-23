@@ -1,4 +1,3 @@
-package com.github.luzhuomi.scalapderivexample
 
 import com.github.luzhuomi.regex.PDeriv._
 import scala.io._
