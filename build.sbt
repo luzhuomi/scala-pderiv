@@ -1,5 +1,9 @@
 import AssemblyKeys._
 
+import SonatypeKeys._
+
+sonatypeSettings
+
 name := "scalapderiv"
 
 organization := "com.github.luzhuomi"
@@ -12,7 +16,7 @@ resolvers += "Maven Repository" at "http://mvnrepository.com/artifact/"
 
 resolvers += "OSS Sonatype" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-resolvers += "Local Ivy Repository" at "file://"+Path.userHome.absolutePath+"/.ivy2/local"
+// resolvers += "Local Ivy Repository" at "file://"+Path.userHome.absolutePath+"/.ivy2/local"
 
 
 libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.4" // scala license
