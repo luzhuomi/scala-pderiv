@@ -4,7 +4,10 @@ name := "scalapderiv"
 
 organization := "com.github.luzhuomi"
 
-version := "0.0.1"
+version := "0.0.2"
+
+
+crossScalaVersions := Seq("2.9.2", "2.10.3", "2.11.3")
 
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
@@ -32,4 +35,4 @@ mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
   }
 }
 
-// publishTo := Some(Resolver.file("mavenLocal",  new File(Path.userHome.absolutePath+"/git/mavenrepo/")))
+publishTo := Some(Resolver.file("mavenLocal",  new File(Path.userHome.absolutePath+"/git/mavenrepo/")))

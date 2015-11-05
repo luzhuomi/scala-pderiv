@@ -18,5 +18,5 @@ resolvers += "Local Ivy Repository" at "file://"+Path.userHome.absolutePath+"/.i
 
 
 
-libraryDependencies += "com.github.luzhuomi" %% "scalapderiv" % "0.0.1"
+libraryDependencies += "com.github.luzhuomi" %% "scalapderiv" % "0.0.2"
 

@@ -134,19 +134,19 @@ object Translate
 	def p_trans(epat:EPat):State[TState,Pat] = epat match 
 	{
 		// () ~>_p ()
-		case EEmpty => point(PE(Empty))
+		case EEmpty(_) => point(PE(Empty))
 		/**
 		* e ~> p
 		* ------------------
 		* ( e ) ~>_p x :: p
 		*/
-		case EGroup(e) => for 
+		case EGroup(e,_) => for 
 		{
 			i <- getIncGI
 			p <- trans(e)
 		} yield PVar(i,Nil,p)
-		case EGroupNonMarking(e) => trans(e)
-		case EOr(es) => 
+		case EGroupNonMarking(e,_) => trans(e)
+		case EOr(es,_) => 
 		{ 
 			def mkChoice(ps:List[Pat]) : Pat = ps match 
 			{
@@ -158,7 +158,7 @@ object Translate
 				ps <- es.traverseS(trans(_))
 			} yield mkChoice(ps)
 		}
-		case EConcat(es) => for
+		case EConcat(es,_) => for
 		{
 			ps <- es.traverseS(trans(_))
 			val q = ps.reverse match 
@@ -167,22 +167,22 @@ object Translate
 				case Nil => PE (Phi)
 			}
 		} yield q
-		case EOpt(e,b) => for 
+		case EOpt(e,b,_) => for 
 		{
 			p <- trans(e)
 			val g = if (b) { Greedy } else { NotGreedy }
 		} yield PChoice(p,PE(Empty),g)
-		case EPlus(e,b) => for 
+		case EPlus(e,b,_) => for 
 		{
 			p <- trans(e)
 			val g = if (b) { Greedy } else { NotGreedy }
 		} yield PPair(p,PStar(p,g))
-		case EStar(e,b) => for 
+		case EStar(e,b,_) => for 
 		{
 			p <- trans(e)
 			val g = if (b) { Greedy } else { NotGreedy }
 		} yield PStar(p,g)
-		case EBound(e,low,Some(high),b) => for 
+		case EBound(e,low,Some(high),b,_) => for 
 		{
 			r <- r_trans(e)
 			i <- getIncNGI
@@ -200,7 +200,7 @@ object Translate
 			}
 			val p = PVar(i,Nil,PE(r3))
 		} yield p
-		case EBound(e,low,None,b) => for 
+		case EBound(e,low,None,b,_) => for 
 		{
 			r <- r_trans(e)
 			i <- getIncNGI
@@ -210,7 +210,7 @@ object Translate
 			val r2  = Seq(r1,Star(r,g))
 			val p   = PVar(i, Nil, PE(r2))
 		}  yield p
-		case ECarat => for 
+		case ECarat(_) => for 
 		{
 			f <- getAnchorStart
 			x <- if (f) 
@@ -228,7 +228,7 @@ object Translate
 				} yield PVar(i,Nil,PE(Empty))
 			}
 		} yield x
-		case EDollar => for 
+		case EDollar(_) => for 
 		{
 			f <- getAnchorEnd
 			_ <- if (f) 
@@ -241,23 +241,23 @@ object Translate
 			i <- getIncNGI
 			val p = PVar(i,Nil,PE(Empty))
 		} yield p
-		case EDot => for 
+		case EDot(_) => for 
 		{
 			i <- getIncNGI
 		} yield PVar(i,Nil,PE(Any))
-		case EAny(cs) => for 
+		case EAny(cs,_) => for 
 		{
 			i <- getIncNGI
 		} yield PVar(i,Nil,PE(char_list_to_re(cs)))
-		case ENoneOf(cs) => for 
+		case ENoneOf(cs,_) => for 
 		{
 			i <- getIncNGI
 		} yield PVar(i,Nil,PE(Not(cs)))
-		case EEscape(c) => for 
+		case EEscape(c,_) => for 
 		{
 			i <- getIncNGI
 		} yield PVar(i,Nil,PE(L(c)))
-		case EChar(c) => for
+		case EChar(c,_) => for
 		{
 			i <- getIncNGI
 		} yield PVar(i,Nil,PE(L(c)))
@@ -265,10 +265,10 @@ object Translate
 
 	def r_trans(epat:EPat):State[TState,RE] = epat match 
 	{
-		case EEmpty => point(Empty)
-		case EGroup(e) => r_trans(e) // this is not possible
-		case EGroupNonMarking(e) => r_trans(e) 
-		case EOr(es) => 
+		case EEmpty(_) => point(Empty)
+		case EGroup(e,_) => r_trans(e) // this is not possible
+		case EGroupNonMarking(e,_) => r_trans(e) 
+		case EOr(es,_) => 
 		{
 			def mkChoice(rs:List[RE]) : RE = rs match 
 			{
@@ -280,7 +280,7 @@ object Translate
 				rs <- es.traverseS(r_trans(_))
 			} yield mkChoice(rs)
 		}
-		case EConcat(es) => 
+		case EConcat(es,_) => 
 		{
 			def mkConcat(rs:List[RE]) : RE = rs match 
 			{
@@ -293,7 +293,7 @@ object Translate
 			} yield mkConcat(rs)
 		}
 
-		case EOpt(e,b) => 
+		case EOpt(e,b,_) => 
 		{
 			val g = if (b) { Greedy	} else { NotGreedy }
 			for 
@@ -301,7 +301,7 @@ object Translate
 				r <- r_trans(e) 
 			} yield RE.Choice(r,Empty,g)
 		}
-		case EPlus(e,b) => 
+		case EPlus(e,b,_) => 
 		{
 			val g = if (b) { Greedy	} else { NotGreedy }
 			for 
@@ -309,7 +309,7 @@ object Translate
 				r <- r_trans(e) 
 			} yield Seq(r,Star(r,g))
 		}
-		case EStar(e,b) => 
+		case EStar(e,b,_) => 
 		{
 			val g = if (b) { Greedy	} else { NotGreedy }
 			for 
@@ -317,7 +317,7 @@ object Translate
 				r <- r_trans(e) 
 			} yield Star(r,g)
 		}
-		case EBound(e,low,Some(high),b) =>
+		case EBound(e,low,Some(high),b,_) =>
 		{
 			val g = if (b) { Greedy	} else { NotGreedy }		
 			def go(r:RE):RE = 
@@ -339,7 +339,7 @@ object Translate
 				r <- r_trans(e)
 			} yield go(r)			
 		}
-		case EBound(e,low,None,b) => 
+		case EBound(e,low,None,b,_) => 
 		{
 			val g = if (b) { Greedy	} else { NotGreedy }
 			def go(r:RE):RE =
@@ -353,7 +353,7 @@ object Translate
 				r <- r_trans(e)
 			} yield go(r)	
 		}
-		case ECarat => for 
+		case ECarat(_) => for 
 		{	// currently we anchor the entire expression regardless of where ^ appears, we turn the subsequent ECarat into literal
 			f <- getAnchorStart
 			x <- if (f) 
@@ -367,7 +367,7 @@ object Translate
 				} yield Empty
 			}
 		} yield x
-		case EDollar => for 
+		case EDollar(_) => for 
 		{	// similar to ecarat, excep that we will not turn treat the subsequent EDollars as literal
 			f <- getAnchorEnd
 			x <- if (f)
@@ -379,15 +379,15 @@ object Translate
 			}
 		} yield Empty
 
-		case EDot => point(Any)
+		case EDot(_) => point(Any)
 
-		case EAny(cs) => point(char_list_to_re(cs))
+		case EAny(cs,_) => point(char_list_to_re(cs))
 
-		case ENoneOf(cs) => point(Not(cs))
+		case ENoneOf(cs,_) => point(Not(cs))
 
-		case EEscape(c) => point(L(c))
+		case EEscape(c,_) => point(L(c))
 
-		case EChar(c) => point(L(c))
+		case EChar(c,_) => point(L(c))
 	}
 }
 
