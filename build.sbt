@@ -1,5 +1,9 @@
 import AssemblyKeys._
 
+import SonatypeKeys._
+
+sonatypeSettings
+
 name := "scalapderiv"
 
 organization := "com.github.luzhuomi"

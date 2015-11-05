@@ -2,6 +2,7 @@ resolvers += Resolver.url("artifactory", url("http://scalasbt.artifactoryonline.
 
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.11.0")
 
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "0.2.1")
 
 
 
