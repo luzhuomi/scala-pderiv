@@ -117,14 +117,18 @@ object Parser
 
 	def p_ere : Parser[EPat] = for 
 	{
-		loc <- getLoc
+		sLoc <- getLoc
 		ps <- interleave(p_branch)(char('|'))
+		eLoc <- getLoc
+		loc = (sLoc,eLoc)
 	} yield EOr(ps,loc)
 
 	def p_branch : Parser[EPat] = for 
 	{
-		loc <- getLoc
+		sLoc <- getLoc
 		ps <- many1(p_exp)
+		eLoc <- getLoc
+		loc = (sLoc,eLoc)
 	} yield EConcat(ps,loc)
 	
 	def p_exp : Parser[EPat] = for 
@@ -137,13 +141,19 @@ object Parser
 	{ 
 		def p1:Parser[EPat] = for 
 		{
-			loc <- getLoc
+			sLoc <- getLoc
 			c <- char('^')
+			eLoc <- getLoc
+			loc = (sLoc,eLoc)
+
 		} yield ECarat(loc)
 		def p2:Parser[EPat] = for 
 		{ 
-			loc <- getLoc
+			sLoc <- getLoc
 			c <- char('$')
+			eLoc <- getLoc
+			loc = (sLoc,eLoc)
+
 		} yield EDollar(loc)
 		+++ (p1) (p2)
 	}
@@ -155,16 +165,20 @@ object Parser
 	{
 		def p1:Parser[EPat] = for 
 		{
-			loc <- getLoc
+			sLoc <- getLoc
 			qn <- char('?')
 			co <- char(':')
+			eLoc <- getLoc
 			x <- p_ere
+			loc = (sLoc,eLoc)
 		} yield EGroupNonMarking(x,loc)
 
 		def p2:Parser[EPat] = for 
 		{
-			loc <- getLoc
+			sLoc <- getLoc
 			x <- p_ere
+			eLoc <- getLoc
+			loc = (sLoc,eLoc)
 		} yield EGroup(x,loc)
 
 		def p3:Parser[EPat] = +++ (attempt(p1)) (p2)
@@ -176,14 +190,18 @@ object Parser
 	{
 		def pnone:Parser[EPat] = for
 		{
-			loc <- getLoc
+			sLoc <- getLoc
 			_ <- char('^')
 			enum <- p_enum  // enum ends with ']'
+			eLoc <- getLoc
+			loc = (sLoc,eLoc)
 		} yield ENoneOf(enum,loc)
 		def pany:Parser[EPat] = for
 		{
-			loc <- getLoc
+			sLoc <- getLoc
 			enum <- p_enum
+			eLoc <- getLoc
+			loc = (sLoc,eLoc)
 		} yield EAny(enum,loc)
 		for 
 		{
@@ -251,9 +269,10 @@ object Parser
 
 	def p_dot:Parser[EPat] = for 
 	{
-		loc <- getLoc
+		sLoc <- getLoc
 		_ <- char('.')
-
+		eLoc <- getLoc
+		loc = (sLoc,eLoc)
 	} yield EDot(loc)
 
 	def p_esc_char_ : Parser[Token] = for 
@@ -264,8 +283,10 @@ object Parser
 
 	def p_esc_char : Parser[EPat] = for 
 	{
-		loc <- getLoc
+		sLoc <- getLoc
 		c <- p_esc_char_
+		eLoc <- getLoc
+		loc = (sLoc,eLoc)
 	} yield EEscape(c,loc)
 
 	def p_return : Parser[Char] = for 
@@ -294,8 +315,10 @@ object Parser
 
 	def p_char : Parser[EPat] = for 
 	{
-		loc <- getLoc
+		sLoc <- getLoc
 		c <- noneOf(specials)
+		eLoc <- getLoc
+		loc = (sLoc,eLoc)
 	} yield EChar(c,loc)
 
 	def p_special_char : Parser[Token] = oneOf(specials)
@@ -304,41 +327,53 @@ object Parser
 	{
 		def optng : Parser[EPat] = for 
 		{
-			loc <- getLoc
+			sLoc <- getLoc
 			_ <- char('?')
 			_ <- char('?')
+			eLoc <- getLoc
+			loc = (sLoc,eLoc)
 		} yield EOpt(atom,false,loc)
 
 		def optg : Parser[EPat] = for
 		{
-			loc <- getLoc
+			sLoc <- getLoc
 			_ <- char('?')
+			eLoc <- getLoc
+			loc = (sLoc,eLoc)
 		} yield EOpt(atom,true,loc)
 		
 		def plusng : Parser[EPat] = for 
 		{
-			loc <- getLoc
+			sLoc <- getLoc
 			_ <- char('+')
 			_ <- char('?')
+			eLoc <- getLoc
+			loc = (sLoc,eLoc)
 		} yield EPlus(atom,false,loc)
 		
 		def plusg : Parser[EPat] = for
 		{
-			loc <- getLoc
+			sLoc <- getLoc
 			_ <- char('+')
+			eLoc <- getLoc
+			loc = (sLoc,eLoc)
 		} yield EPlus(atom,true,loc)
 		
 		def starng : Parser[EPat] = for 
 		{
-			loc <- getLoc
+			sLoc <- getLoc
 			_ <- char('*')
 			_ <- char('?')
+			eLoc <- getLoc
+			loc = (sLoc,eLoc)
 		} yield EStar(atom,false,loc)
 		
 		def starg : Parser[EPat] = for
 		{
-			loc <- getLoc
+			sLoc <- getLoc
 			_ <- char('*')
+			eLoc <- getLoc
+			loc = (sLoc,eLoc)
 		} yield EStar(atom,true,loc)
 
 		val opt = +++(attempt(optng))(optg) 
@@ -385,10 +420,12 @@ object Parser
 
 		for 
 		{
-			loc <- getLoc
+			sLoc <- getLoc
 			lowS <- many1(digit)
 			val lowI = lowS.mkString.toInt
 			highMI <- option(Some(lowI),attempt(p(lowI)))
+			eLoc <- getLoc
+			loc = (sLoc,eLoc)
 		} yield (EBound(atom,lowI,highMI,b,loc))
 	}
 

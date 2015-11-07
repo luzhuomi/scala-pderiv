@@ -25,7 +25,7 @@ object ExtPattern
 	case class EChar(c:Char,loc:Loc) extends EPat // the non-escaped character
 
 	// the src loc w.r.t ot the right most character
-	type Loc = Int
+	type Loc = (Int,Int) // start,end
 
 	def hasGroup(p:EPat) : Boolean = p match 
 	{
