@@ -253,6 +253,15 @@ object Translate
 		{
 			i <- getIncNGI
 		} yield PVar(i,Nil,PE(Not(cs)))
+		case EEscape('s',_) => for  // '\s' -> '\t|\n|\r\ '
+		{
+			i <- getIncNGI
+			tab = PVar(i,Nil,PE(L('\t')))
+			nl  = PVar(i,Nil,PE(L('\n')))
+			rt  = PVar(i,Nil,PE(L('\r')))
+			sp  = PVar(i,Nil,PE(L(' ')))
+			g   = Greedy
+		} yield PChoice(tab, PChoice(nl, PChoice(rt, sp, g), g), g)
 		case EEscape(c,_) => for 
 		{
 			i <- getIncNGI
