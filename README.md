@@ -39,3 +39,5 @@ For Java example, refer to this sub project
 ```
 https://github.com/luzhuomi/scala-pderiv-java-ex
 ```
+# limitation
+Most of the escape characters except for (\s) are not yet supported. I will fix them when time permits. 
