@@ -3,7 +3,7 @@ Regular expression parser implemented in parsec and matcher implemented using pa
 
 # theory
 Refer to our ppdp 12 paper.
-https://sites.google.com/site/luzhuomi/file/ppdp39-sulzmann.pdf?attredirects=0
+https://sites.google.com/site/luzhuomi/file/ppdp39-sulzmann.pdf
 
 # example
 For Scala example, refer to example/src/scala/
