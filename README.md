@@ -3,11 +3,11 @@ Regular expression parser implemented in parsec and matcher implemented using pa
 
 # theory
 Refer to our ppdp 12 paper.
-https://sites.google.com/site/luzhuomi/file/ppdp39-sulzmann.pdf?attredirects=0
+https://sites.google.com/site/luzhuomi/file/ppdp39-sulzmann.pdf
 
 # example
 For Scala example, refer to example/src/scala/
-```
+```scala
 import com.github.luzhuomi.regex.PDeriv._
 import scala.io._
 import java.io._
@@ -21,13 +21,11 @@ object USAddress
 		{
 			case Some(p) => 
 			{
-				// println("compiled")
-				// val src = Source.fromFile(args(0)).getLines
 				val src = Source.fromFile("/tmp/addr.txt").getLines
 				for (l <- src) 
 				{
 					val res = exec(p,l.trim)
-					 println(res)
+					println(res)
 				}
 
 			}
