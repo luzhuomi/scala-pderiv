@@ -25,7 +25,7 @@ object USAddress
 				for (l <- src) 
 				{
 					val res = exec(p,l.trim)
-					 println(res)
+					println(res)
 				}
 
 			}
