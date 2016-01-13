@@ -7,7 +7,7 @@ https://sites.google.com/site/luzhuomi/file/ppdp39-sulzmann.pdf
 
 # example
 For Scala example, refer to example/src/scala/
-```
+```scala
 import com.github.luzhuomi.regex.PDeriv._
 import scala.io._
 import java.io._
