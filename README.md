@@ -21,8 +21,6 @@ object USAddress
 		{
 			case Some(p) => 
 			{
-				// println("compiled")
-				// val src = Source.fromFile(args(0)).getLines
 				val src = Source.fromFile("/tmp/addr.txt").getLines
 				for (l <- src) 
 				{
