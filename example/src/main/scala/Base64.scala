@@ -14,7 +14,8 @@ object Base64
 		{
 			case Some(p) => 
 			{
-				// println("compiled")
+				println("compiled")
+				// val ln = readLine()
 				// val src = Source.fromFile(args(0)).getLines
 				val src = Source.fromFile("/tmp/base64.txt").getLines
 				for (l <- src) 

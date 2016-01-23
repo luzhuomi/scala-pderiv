@@ -211,11 +211,13 @@ object LeftToRightD
 		}
 	}
 
+	// OPTIMIZATION: instead of computing List[Binder], we keep track of a List[Binder=>Binder] (binder update functions compositions)
+	//               the composition is only applied to the binder when the path is yieding a final state. (speed up 14s -> 10s on USAddress)
 	def patMatchesIntStatePdPat(cnt:Int,
 		dStateTable:DPat0Table,
 		word:Word,
-		currNfaStateBinders:List[(Int,Int,Binder)]
-		):List[(Int,Int,Binder)] = currNfaStateBinders match 
+		currNfaStateBinders:List[(Int,Int,Binder=>Binder)]
+		):List[(Int,Int,Binder=>Binder)] = currNfaStateBinders match 
 	{
 		case Nil => Nil
 		case (x::xs) => 
@@ -232,18 +234,18 @@ object LeftToRightD
 					case None                           => Nil 
 					case Some((j,next_nfaStates,fDict)) => 
 					{
-						def go(a:List[Binder], smb:(Int,Int,Binder)):List[Binder] = 
+						def go(a:List[Binder=>Binder], smb:(Int,Int,Binder=>Binder)):List[Binder=>Binder] = 
 						{
-							val (s,m,b) = smb
+							val (s,m,bf) = smb
 							fDict.get(m) match 
 							{
 								case None     => a
-								case Some(gs) => a ++ gs.map (g => g(cnt)(b))
+								case Some(gs) => a ++ gs.map (g => (g(cnt) compose bf))
 							}
 						}
-						val em:List[Binder]      = Nil
-						val binders:List[Binder] = currNfaStateBinders.foldLeft(em)(go)
-						val nextNfaStateBinders  = next_nfaStates.zip(binders).map( xy => (j,xy._1,xy._2))
+						val em:List[Binder=>Binder] = Nil
+						val binderfuncs:List[Binder=>Binder] = currNfaStateBinders.foldLeft(em)(go)
+						val nextNfaStateBinders  = next_nfaStates.zip(binderfuncs).map( xy => (j,xy._1,xy._2))
 						val cnt_ 				 = cnt + 1
 						patMatchesIntStatePdPat(cnt_,dStateTable,w,nextNfaStateBinders)
 					}
@@ -251,19 +253,20 @@ object LeftToRightD
 			}
 		}
 	}
-
+	
 	def greedyPatMatch(p:Pat,w:Word):Option[Env] = buildDPat0Table(p) match 
 	{
 		case (dStateTable,sfinal) => 
 		{
 			val s = 0
 			val b = toBinder(p)
-			val allbinders_ = patMatchesIntStatePdPat(0,dStateTable,w,List((0,s,b)))
+			def id(x:Binder) = x
+			val allbinders_ = patMatchesIntStatePdPat(0,dStateTable,w,List((0,s,id)))
 			val allbinders  = allbinders_.filter( t => sfinal.contains(t._2) ).map ( t => t._3 )
 			allbinders match 
 			{
 				case Nil    => None
-				case (b::_) => Some(collectPatMatchFromBinder(w,b))
+				case (f::_) => Some(collectPatMatchFromBinder(w,f(b)))
 			}
 			
 		}
@@ -285,12 +288,13 @@ object LeftToRightD
 		case (dStateTable,sfinal,b) => 
 		{
 			val s = 0
-			val allbinders_ = patMatchesIntStatePdPat(0,dStateTable,w,List((0,s,b)))
+			def id(x:Binder) = x
+			val allbinders_ = patMatchesIntStatePdPat(0,dStateTable,w,List((0,s,id)))
 			val allbinders  = allbinders_.filter( t => sfinal.contains(t._2) ).map ( t => t._3 )
 			allbinders match 
 			{
 				case Nil    => None
-				case (b::_) => Some(collectPatMatchFromBinder(w,b))
+				case (f::_) => Some(collectPatMatchFromBinder(w,f(b)))
 			}
 			
 		}
