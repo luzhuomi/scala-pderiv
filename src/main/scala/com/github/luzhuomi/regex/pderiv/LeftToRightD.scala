@@ -52,6 +52,7 @@ object LeftToRightD
 	def mapping(dict:Map[Pat,(Pat,Int)], p:Pat) : Int = dict.get(p) match
 	{
 		case Some(x) => x._2
+		case None    => -1
 		// None is impossible
 	}
 
@@ -131,7 +132,7 @@ object LeftToRightD
 	def mapping_(dict:Map[NFAStates,Int])(p:NFAStates) = dict.get(p) match
 	{
 		case Some(x) => x
-		// None is impossible
+		case None    => -1 // None is impossible
 	}
 
 	def builder_(pdStateTable:PDPat0Table, 
