@@ -41,3 +41,16 @@ https://github.com/luzhuomi/scala-pderiv-java-ex
 ```
 # limitation
 Most of the escape characters except for (\s) are not yet supported. I will fix them when time permits. 
+
+# performance
+Optimization in progress. 
+
+# credits
+
+Thanks to the Yourkit team who is willing to provide a opensource license for their profiler.
+YourKit supports open source projects with its full-featured Java Profiler.
+
+<img src="https://www.yourkit.com/images/yklogo.png"/>
+YourKit, LLC is the creator of <a href="https://www.yourkit.com/java/profiler/index.jsp">YourKit Java Profiler</a>
+and <a href="https://www.yourkit.com/.net/profiler/index.jsp">YourKit .NET Profiler</a>,
+innovative and intelligent tools for profiling Java and .NET applications. 
