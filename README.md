@@ -3,8 +3,8 @@ Regular expression parser implemented in parsec and matcher implemented using pa
 
 # Release note
 
-0.0.5 fixed stack overflow problem in 0.0.4 caused by the function composition.
-0.0.4 optimization
+* 0.0.5 fixed stack overflow problem in 0.0.4 caused by the function composition.
+* 0.0.4 optimization
 
 # theory
 Refer to our ppdp 12 paper.
