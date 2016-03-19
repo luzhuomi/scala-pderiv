@@ -2,12 +2,24 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 
 public class USAddressJ 
 {
 	private static final String REGEX = "^(.*) ([A-Za-z]{2}) ([0-9]{5})(-[0-9]{4})?$";
 	public static void main(String[] args) 
 	{
+		if (args.length > 0) 
+		{
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in)))
+			{
+				br.readLine(); 				
+			}
+			catch (Exception e) 
+			{
+				System.out.println(e);
+			}
+		}
 		Pattern p = Pattern.compile(REGEX);
 		try (BufferedReader br = new BufferedReader(new FileReader("/tmp/addr.txt"))) 
 		{

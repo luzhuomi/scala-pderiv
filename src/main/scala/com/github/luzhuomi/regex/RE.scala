@@ -5,7 +5,7 @@ import com.github.luzhuomi.regex.Common._
 
 object RE
 {
-	sealed trait RE 
+	sealed trait RE
 	case object Phi extends RE
 	case object Empty extends RE
 	case class L(c:Char) extends RE
@@ -15,7 +15,7 @@ object RE
 	case object Any extends RE
 	case class Not(cs:List[Char]) extends RE
 
-	def sigmaRE(r:RE) : List[Char] = 
+	def sigmaRE(r:RE) : List[Char] =
 	{
 		sigmaREsub(r).toList
 	}
@@ -23,11 +23,12 @@ object RE
 	def sigmaREsub(r:RE) : Set[Char] = r match
 	{
 		case L(l) => Set(l)
-		case Any  => (32 to 127).map(_.toChar).toSet
-		case Not(cs) => 
+		case Any  => (0 to 127).map(_.toChar).toSet // (32 to 127).map(_.toChar).toSet
+		case Not(cs) =>
 		{
 			val s = cs.toSet
-			(32 to 127).map(_.toChar).filter( s.contains(_)).toSet
+			// (32 to 127).map(_.toChar).filter( s.contains(_)).toSet
+			(0 to 127).map(_.toChar).filter( s.contains(_)).toSet
 		}
 		case Seq(r1,r2) => sigmaREsub(r1) union sigmaREsub(r2)
 		case Choice(r1,r2,g) => sigmaREsub(r1) union sigmaREsub(r2)
@@ -40,11 +41,11 @@ object RE
 		case Nil => Phi
 		case (r::rs) => rs.foldLeft(r)( (r1:RE,r2:RE) => Choice(r1,r2,Greedy))
 	}
-	
 
-	implicit object REIsGreedy extends IsGreedy [RE] 
+
+	implicit object REIsGreedy extends IsGreedy [RE]
 	{
-		def isGreedy(r:RE):Boolean = r match 
+		def isGreedy(r:RE):Boolean = r match
 		{
 			case Phi 			 => false
 			case Empty 			 => false
@@ -60,9 +61,9 @@ object RE
 	}
 
 
-	implicit object REPosEpsilon extends PosEpsilon[RE] 
+	implicit object REPosEpsilon extends PosEpsilon[RE]
 	{
-		def posEpsilon(r:RE):Boolean = r match 
+		def posEpsilon(r:RE):Boolean = r match
 		{
 			case Phi 			 => false
 			case Empty 			 => true
@@ -77,9 +78,9 @@ object RE
 	}
 
 
-	implicit object REIsEpsilon extends IsEpsilon[RE] 
+	implicit object REIsEpsilon extends IsEpsilon[RE]
 	{
-		def isEpsilon(r:RE):Boolean = r match 
+		def isEpsilon(r:RE):Boolean = r match
 		{
 			case Phi 			 => false
 			case Empty 			 => true
@@ -95,7 +96,7 @@ object RE
 
 	implicit object REisPhi extends IsPhi[RE]
 	{
-		def isPhi(r:RE):Boolean = r match 
+		def isPhi(r:RE):Boolean = r match
 		{
 			case Phi 			 => true
 			case Empty 			 => false
@@ -109,22 +110,22 @@ object RE
 		}
 	}
 
-	implicit object RESimplifiable extends Simplifiable[RE] 
+	implicit object RESimplifiable extends Simplifiable[RE]
 	{
-		def simplify(r:RE):RE = r match 
+		def simplify(r:RE):RE = r match
 		{
 			case L(l) => L(l)
 			case Any => Any
 			case Not(cs) => Not(cs)
-			case Seq(r1,r2) => 
+			case Seq(r1,r2) =>
 			{
 				val r1p = simplify(r1)
 				val r2p = simplify(r2)
 				if (implicitly[IsEpsilon[RE]].isEpsilon(r1p)) { r2p }
-				else 
+				else
 				{
 					if (implicitly[IsEpsilon[RE]].isEpsilon(r2p)) { r1p }
-					else 
+					else
 					{
 						Seq(r1p,r2p)
 					}
@@ -135,16 +136,16 @@ object RE
 				val r1p = simplify(r1)
 				val r2p = simplify(r2)
 				if (implicitly[IsPhi[RE]].isPhi(r1p)) { r2p }
-				else 
+				else
 				{
 					if (implicitly[IsPhi[RE]].isPhi(r2p)) { r1p }
-					else 
+					else
 					{
 						Choice(r1p,r2p,g)
 					}
 				}
 			}
-			case Star(r,g) => 
+			case Star(r,g) =>
 			{
 				Star(simplify(r),g)
 			}
@@ -153,12 +154,12 @@ object RE
 		}
 	}
 
-	def pd(r:RE,l:Char):List[RE] = 
+	def pd(r:RE,l:Char):List[RE] =
 	{
 		val pds = pdSub(r,l)
 		pds.distinct
 	}
-	
+
 	def pdSub(r:RE,l:Char):List[RE] = r match
 	{
 		case Phi => Nil
@@ -170,14 +171,14 @@ object RE
 		case Not(cs) if cs.contains(l) => List(Empty)
 		case Not(cs) 			  	   => Nil
 		case Choice(r1,r2,g) => pdSub(r1,l) ++ pdSub(r2,l)
-		case Seq(r1,r2) if (implicitly[PosEpsilon[RE]].posEpsilon(r1)) => 
+		case Seq(r1,r2) if (implicitly[PosEpsilon[RE]].posEpsilon(r1)) =>
 		{
 			val s0 = pdSub(r1,l)
 			val s1 = s0 map ( r => Seq(r,r2))
 			val s2 = pdSub(r2,l)
 			s1 ++ s2
 		}
-		case Seq(r1,r2) => 
+		case Seq(r1,r2) =>
 		{
 			val s0 = pdSub(r1,l)
 			val s1 = s0 map ( r => Seq(r,r2))
@@ -190,6 +191,6 @@ object RE
 			s1
 		}
 	}
-	
+
 
 }
