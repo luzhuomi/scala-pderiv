@@ -8,7 +8,7 @@ name := "scalapderiv"
 
 organization := "com.github.luzhuomi"
 
-version := "0.0.5"
+version := "0.0.6"
 
 
 crossScalaVersions := Seq("2.9.2", "2.10.3", "2.11.3")
