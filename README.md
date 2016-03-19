@@ -1,6 +1,11 @@
 # scala-pderiv
 Regular expression parser implemented in parsec and matcher implemented using partial derivatives.
 
+# Release note
+
+0.0.5 fixed stack overflow problem in 0.0.4 caused by the function composition.
+0.0.4 optimization
+
 # theory
 Refer to our ppdp 12 paper.
 https://sites.google.com/site/luzhuomi/file/ppdp39-sulzmann.pdf
