@@ -2,7 +2,7 @@ package com.github.luzhuomi.regex
 
 
 import scalaz._
-import Scalaz._
+import Scalaz.{interleave => _, _}
 import com.github.luzhuomi.scalazparsec.NonBacktracking._
 import com.github.luzhuomi.regex.ExtPattern._
 import com.github.luzhuomi.regex.IntPattern._

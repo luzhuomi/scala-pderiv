@@ -10,6 +10,7 @@ organization := "com.github.luzhuomi"
 
 version := "0.0.6"
 
+scalaVersion := "2.11.8"
 
 crossScalaVersions := Seq("2.9.2", "2.10.3", "2.11.3")
 
@@ -24,7 +25,7 @@ resolvers += "Kenny's github repo" at "http://github.com/luzhuomi/mavenrepo/raw/
 // resolvers += "Local Ivy Repository" at "file://"+Path.userHome.absolutePath+"/.ivy2/local"
 
 
-libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.4" // scala license
+libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.4" // scala license
 
 libraryDependencies += "com.github.luzhuomi" %% "scalazparsec" % "0.1.2"  // apache license
 
