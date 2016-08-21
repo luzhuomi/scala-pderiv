@@ -20,7 +20,7 @@ resolvers += "Maven Repository" at "http://mvnrepository.com/artifact/"
 
 resolvers += "OSS Sonatype" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-resolvers += "Kenny's github repo" at "http://github.com/luzhuomi/mavenrepo/raw/master"
+resolvers += "luzhuomi github repo" at "https://raw.githubusercontent.com/luzhuomi/mavenrepo/master/"
 
 // resolvers += "Local Ivy Repository" at "file://"+Path.userHome.absolutePath+"/.ivy2/local"
 
