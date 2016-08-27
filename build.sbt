@@ -8,7 +8,7 @@ name := "scalapderiv"
 
 organization := "com.github.luzhuomi"
 
-version := "0.0.6"
+version := "0.0.7"
 
 scalaVersion := "2.11.8"
 

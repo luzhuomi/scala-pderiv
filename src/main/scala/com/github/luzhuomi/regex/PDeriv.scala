@@ -6,7 +6,7 @@ import com.github.luzhuomi.regex.ExtPattern._
 import com.github.luzhuomi.regex.IntPattern._
 import com.github.luzhuomi.regex.Parser._
 import com.github.luzhuomi.regex.Translate._
-import com.github.luzhuomi.regex.pderiv.LeftToRightD._
+import com.github.luzhuomi.regex.pderiv.LeftToRight._
 
 object PDeriv
 {
