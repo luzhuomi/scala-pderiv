@@ -1,4 +1,4 @@
-package com.github.luzhuomi.regex
+package com.github.luzhuomi.regex.pderiv
 
 /**
 * Translating from External AST to the Internal AST.
@@ -8,10 +8,10 @@ package com.github.luzhuomi.regex
 import scalaz._
 import scalaz.{ State => S }
 import Scalaz._
-import com.github.luzhuomi.regex.ExtPattern._
-import com.github.luzhuomi.regex.IntPattern._
-import com.github.luzhuomi.regex.RE._
-import com.github.luzhuomi.regex.Common._
+import com.github.luzhuomi.regex.pderiv.ExtPattern._
+import com.github.luzhuomi.regex.pderiv.IntPattern._
+import com.github.luzhuomi.regex.pderiv.RE._
+import com.github.luzhuomi.regex.pderiv.Common._
 
 object Translate 
 {

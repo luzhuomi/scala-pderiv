@@ -1,11 +1,11 @@
 package com.github.luzhuomi.regex
 
 import com.github.luzhuomi.scalazparsec.NonBacktracking._
-import com.github.luzhuomi.regex.RE._
-import com.github.luzhuomi.regex.ExtPattern._
-import com.github.luzhuomi.regex.IntPattern._
-import com.github.luzhuomi.regex.Parser._
-import com.github.luzhuomi.regex.Translate._
+import com.github.luzhuomi.regex.pderiv.RE._
+import com.github.luzhuomi.regex.pderiv.ExtPattern._
+import com.github.luzhuomi.regex.pderiv.IntPattern._
+import com.github.luzhuomi.regex.pderiv.Parser._
+import com.github.luzhuomi.regex.pderiv.Translate._
 import com.github.luzhuomi.regex.pderiv.LeftToRight._
 
 object PDeriv

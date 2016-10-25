@@ -1,6 +1,6 @@
-package com.github.luzhuomi.regex
+package com.github.luzhuomi.regex.pderiv
 
-import com.github.luzhuomi.regex.Common._
+import com.github.luzhuomi.regex.pderiv.Common._
 
 
 object RE

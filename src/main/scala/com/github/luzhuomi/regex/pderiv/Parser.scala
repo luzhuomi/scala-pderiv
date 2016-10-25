@@ -1,12 +1,12 @@
-package com.github.luzhuomi.regex
+package com.github.luzhuomi.regex.pderiv
 
 
 import scalaz._
 import Scalaz.{interleave => _, _}
 import com.github.luzhuomi.scalazparsec.NonBacktracking._
-import com.github.luzhuomi.regex.ExtPattern._
-import com.github.luzhuomi.regex.IntPattern._
-import com.github.luzhuomi.regex.RE._
+import com.github.luzhuomi.regex.pderiv.ExtPattern._
+import com.github.luzhuomi.regex.pderiv.IntPattern._
+import com.github.luzhuomi.regex.pderiv.RE._
 
 object Parser 
 {

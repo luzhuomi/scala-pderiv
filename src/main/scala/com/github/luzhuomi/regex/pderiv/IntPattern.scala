@@ -1,4 +1,4 @@
-package com.github.luzhuomi.regex
+package com.github.luzhuomi.regex.pderiv
 
 /** The internal AST
  *  
@@ -7,8 +7,8 @@ package com.github.luzhuomi.regex
 
 
 import scala.collection.immutable.IntMap
-import com.github.luzhuomi.regex.Common._
-import com.github.luzhuomi.regex.RE._
+import com.github.luzhuomi.regex.pderiv.Common._
+import com.github.luzhuomi.regex.pderiv.RE._
 
 object IntPattern
 {

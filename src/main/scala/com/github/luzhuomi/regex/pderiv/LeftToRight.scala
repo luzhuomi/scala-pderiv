@@ -3,9 +3,9 @@ package com.github.luzhuomi.regex.pderiv
 
 import scala.collection.immutable.IntMap
 import scala.collection.immutable.Map
-import com.github.luzhuomi.regex.IntPattern._
-import com.github.luzhuomi.regex.RE._
-import com.github.luzhuomi.regex.Common._
+import com.github.luzhuomi.regex.pderiv.IntPattern._
+import com.github.luzhuomi.regex.pderiv.RE._
+import com.github.luzhuomi.regex.pderiv.Common._
 object LeftToRight
 {
 	type Word = String
