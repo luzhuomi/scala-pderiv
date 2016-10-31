@@ -15,8 +15,7 @@ resolvers += "Maven Repository" at "http://mvnrepository.com/artifact/"
 resolvers += "OSS Sonatype" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 
-resolvers += "Local Ivy Repository" at "file://"+Path.userHome.absolutePath+"/.ivy2/local"
-
+resolvers += "luzhuomi github repo" at "https://raw.githubusercontent.com/luzhuomi/mavenrepo/master/"
 
 
 libraryDependencies += "com.github.luzhuomi" %% "scalapderiv" % "0.0.7"
