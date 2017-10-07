@@ -1,8 +1,8 @@
-import AssemblyKeys._
+// import AssemblyKeys._
 
-import SonatypeKeys._
+// import SonatypeKeys._
 
-sonatypeSettings
+// sonatypeSettings
 
 name := "scalapderiv"
 
@@ -29,15 +29,13 @@ libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.4" // scala license
 
 libraryDependencies += "com.github.luzhuomi" %% "scalazparsec" % "0.1.2"  // apache license
 
-seq(assemblySettings: _*)
+// seq(assemblySettings: _*)
 
 
-mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
-  {
+assemblyMergeStrategy in assembly := {
     case PathList("log4j.properties") => MergeStrategy.discard
     case PathList("META-INF", xs @ _*) => MergeStrategy.discard
     case _ => MergeStrategy.last // leiningen build files
-  }
 }
 
 publishTo := Some(Resolver.file("mavenLocal",  new File(Path.userHome.absolutePath+"/git/mavenrepo/")))
