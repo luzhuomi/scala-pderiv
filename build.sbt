@@ -12,7 +12,7 @@ version := "0.0.8"
 
 scalaVersion := "2.11.8"
 
-crossScalaVersions := Seq("2.10.3", "2.11.3")
+crossScalaVersions := Seq("2.10.3", "2.11.3","2.12.3")
 
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
@@ -25,9 +25,9 @@ resolvers += "luzhuomi github repo" at "https://raw.githubusercontent.com/luzhuo
 // resolvers += "Local Ivy Repository" at "file://"+Path.userHome.absolutePath+"/.ivy2/local"
 
 
-libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.4" // scala license
+libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.14" // scala license
 
-libraryDependencies += "com.github.luzhuomi" %% "scalazparsec" % "0.1.2"  // apache license
+libraryDependencies += "com.github.luzhuomi" %% "scalazparsec" % "0.1.4"  // apache license
 
 // seq(assemblySettings: _*)
 
